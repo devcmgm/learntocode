@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Learn 2 Code - 30 Minutes a Day</title>
-</head>
-<body>
+
 <h1>Learn 2 Code - 30 Minutes a Day</h1>
 <p>Your learning facilitator:
     Zach Lewis has been a developer for over 35 years, starting before home computers and paper terminals.
@@ -35,5 +29,3 @@ NOTE: You do not need to purchase the books until before the date of the first c
     <LI>Purchase before May 19th Class -- <a href="https://www.amazon.com/Hands-Stack-Development-Spring-React-dp-1789138086/dp/1789138086">Hands-On Full Stack Development with Spring Boot 2.0 and React: Build modern and scalable full stack applications using the Java-based Spring Framework 5.0 and React</a></LI>
     <LI>Purchase before August 18th Class -- <a href="https://www.amazon.com/Realm-Racket-Learn-Program-Game/dp/1593274912">Realm of Racket: Learn to Program, One Game at a Time!</a></LI>
 </UL>
-</body>
-</html>
