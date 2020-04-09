@@ -18,6 +18,7 @@ the class and make you understand before we move on to next subject.  The founda
 
 <UL>
     <LI>Session #1</a> - April 9th Computers are Dumb - CPU, Operating System, System Calls, Compilers and interpreters</LI>
+    <P>Extra Credit: Review: <a href="https://www.i-programmer.info/babbages-bag/151-cpu.html">Computers and CPU</a></P>
     <LI>Session #2 - April 14th/16th - OS Shell Programming and Programming Editors</LI>
     <LI>Session #3 - April 21st/23rd - TBD ... </LI>
     <LI> ...</LI>
