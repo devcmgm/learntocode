@@ -1,14 +1,39 @@
-<h1>Learn 2 Code - 30 Minutes a Day - Assignment #1</h1>
-<hr/>
-This is the beginning of a journey from a beginner to full stack developer.
-<br/>
-The first calls will consist of setting up your learning environment.
-<ol>
-    <li><a href="https://github.com/">Create a GitHub Account</a></LI>
-    <li>Fork the Learn 2 Code GitHub Repository</LI>
-    <li><a href="https://zeit.co">Deploy your first HTML website on Zeit Now</a></li>
-    <li><a href="https://www.freelancer.com/">HTML Freelance work</a></li>
-</ol>
-<hr/>
-<h2>Home Work</h2>
-Search freelancer for three website HTML projects to discuss at the next class.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Learn 2 Code - 30 Minutes a Day</title>
+</head>
+<body>
+<h1>Learn 2 Code - 30 Minutes a Day</h1>
+<p>Your learning facilitator:
+    Zach Lewis has been a developer for over 35 years, starting before home computers and paper terminals.
+    He has worked for IBM, Bell Labs, HP, and many more companies in all areas from system administrator, project manager, IT consultant, software engineer and hardware Engineer.
+    He has experience from the operating system internals to front-end applications.
+    server
+</p>
+<h2>Class Overview/Schedule</h2>
+<P>This class will move a pace to allow the core concepts to be understood.
+The flow will start with the foundation and then move to deeper and coding to ensure we answer the why and how it works.
+</P>
+<P>Just 30 minutes of content and links to review during the week before the next class.
+    <BR>NOTE:  You only need to meet on either Tuesday or Thursday, the same info will be covered both days.
+</P>>
+We will meet twice a-week, Tuesday and Thursday for 30 minutes to review concepts and get assignments.  We will move at the pace of
+the class and make you understand before we move on to next subject.  The foundation is key before we get to coding and building apps.
+
+<UL>April 9th Computers are Dumb - CPU, Operating System, System Calls, Compilers and interpreters
+    <LI><a href="session01.html">Session #1</a> - </LI>
+    <LI>Session #2 - April 14th/16th - OS Shell Programming and Programming Editors</LI>
+    <LI>Session #3 - April 21st/23rd - TBD ... </LI>
+    <LI> ...</LI>
+</UL>
+
+<h2>Key Books</h2>
+NOTE: You do not need to purchase the books until before the date of the first class on that subject.  This is a six month learning session.
+<UL>
+    <LI>Purchase before May 19th Class -- <a href="https://www.amazon.com/Hands-Stack-Development-Spring-React-dp-1789138086/dp/1789138086">Hands-On Full Stack Development with Spring Boot 2.0 and React: Build modern and scalable full stack applications using the Java-based Spring Framework 5.0 and React</a></LI>
+    <LI>Purchase before August 18th Class -- <a href="https://www.amazon.com/Realm-Racket-Learn-Program-Game/dp/1593274912">Realm of Racket: Learn to Program, One Game at a Time!</a></LI>
+</UL>
+</body>
+</html>
