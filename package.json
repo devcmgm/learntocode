@@ -1,0 +1,7 @@
+{
+  "name": "learn2code-30min-a-day",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Custom Build Demo'
+  }
+}

@@ -1,18 +1,14 @@
-# learntocode
-
-<h1>Learn to Code Python, HTML, CSS, React and NodeJs </h1>
-<hr>
-This training is an intro class and will teach what you need to know to start learning
-on your own with free cloud tools. Create a gmail account, since some of the classes may be 
-using google hangouts on the web.  Also you should create free accounts on GitHub and RedHat Open Shift.
-<hr>
-Key Tools:
-<UL>
-<LI>https://github.com</LI>
-<LI>https://www.eclipse.org/che</LI>
-<LI>https://www.w3schools.com</LI>
-<LI>https://che.openshift.io/dashboard</LI>
-</UL>
-<HR>
-
-
+<h1>Learn 2 Code - 30 Minutes a Day - Assignment #1</h1>
+<hr/>
+This is the beginning of a journey from a beginner to full stack developer.
+<br/>
+The first calls will consist of setting up your learning environment.
+<ol>
+    <li><a href="https://github.com/">Create a GitHub Account</a></LI>
+    <li>Fork the Learn 2 Code GitHub Repository</LI>
+    <li><a href="https://zeit.co">Deploy your first HTML website on Zeit Now</a></li>
+    <li><a href="https://www.freelancer.com/">HTML Freelance work</a></li>
+</ol>
+<hr/>
+<h2>Home Work</h2>
+Search freelancer for three website HTML projects to discuss at the next class.
