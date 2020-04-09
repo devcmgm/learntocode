@@ -11,10 +11,9 @@
 The flow will start with the foundation and then move to deeper and coding to ensure we answer the why and how it works.
 </P>
 <P>Just 30 minutes of content and links to review during the week before the next class.
-    <BR>NOTE:  You only need to meet on either Tuesday or Thursday, the same info will be covered both days.
 </P>
-We will meet twice a-week, Tuesday and Thursday for 30 minutes to review concepts and get assignments.  We will move at the pace of
-the class and make you understand before we move on to next subject.  The foundation is key before we get to coding and building apps.
+We will meet on Tuesday's for 30 minutes to review concepts and get assignments.  We will move at the pace of
+the class and make sure you understand before we move on to next subject.  The foundation concepts are key before we get to coding and building apps.
 
 <UL>
     <LI>Session #1</a> - April 9th Computers are Dumb - CPU, Operating System, System Calls, Compilers and interpreters</LI>
