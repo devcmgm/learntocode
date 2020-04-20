@@ -1,5 +1,5 @@
 
-<h1>Learn 2 Code - 30 Minutes a Day</h1>
+<h1>Learn 2 Code - 10 Minutes a Day</h1>
 <p>Your learning facilitator:
     Zach Lewis has been a developer for over 35 years, starting before home computers and paper terminals.
     He has worked for IBM, Bell Labs, HP, and many more companies in all areas from system administrator, project manager, IT consultant, software engineer and hardware Engineer.
