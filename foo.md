@@ -25,7 +25,7 @@ This configuration launches 9 services that form a cohesive application ecosyste
    - Serves a web UI on port 3000 (mapped to container's 80).
    - Shares static files via a volume (`static-files`) with the backend.
    - Loads env vars from `.env`.
-   - Purpose: Handles user-facing interface, a React-based SPA (version 18.3.1) built with Vite (5.4.19) as the development/build tool for fast bundling and hot module replacement (HMR). The app is named "coral" (version 0.1.0) and configured for private use with a homepage at `/coral`.
+   - Purpose: Handles user-facing interface, a React-based SPA (version 18.3.1) built with Vite (5.4.19) as the development/build tool for fast bundling and hot module replacement (HMR). The app is named "appdemo" (version 0.1.0) and configured for private use with a homepage at `/appdemo`.
    - **React Package Details** (from `package.json`):
      - **What It Is**: A modern React application setup using Vite for tooling, Material-UI (MUI v7.1.0) for styled components and icons, Redux Toolkit (2.2.7) for state management, React Router (7.6.0) for navigation, and mapping libraries like Leaflet (1.9.4 with react-leaflet 4.2.1) and OpenLayers (ol 10.6.1) for geospatial visualizations. It includes authentication via OIDC (react-oidc-context 3.2.0, integrating with Keycloak), date handling (date-fns 4.1.0, dayjs 1.11.13, @mui/x-date-pickers 8.3.1), and utilities for geohash (latlon-geohash 2.0.0), MGRS coordinates (mgrs 2.1.0), and resizable panels (react-resizable-panels 3.0.3). Tables are handled with material-react-table (3.2.1), and HTTP requests via Axios (1.8.3). Testing uses Vitest (3.0.9) with coverage, Storybook (8.6.12) for component stories, and ESLint/Prettier for code quality.
      - **How It Is Used**: Scripts like `yarn dev` or `yarn start` run Vite server on port 3000 with HMR; `yarn build` compiles to production assets (output to `/dist` for Nginx serving); `yarn lint` and `yarn format` enforce code style; `yarn test` runs Vitest tests; `yarn storybook` launches Storybook for isolated component development. Dependencies are managed via Yarn/NPM, with resolutions for specific versions to avoid conflicts/vulnerabilities (e.g., Babel 7.26.0 for transpilation).
@@ -196,7 +196,7 @@ To set up and run:
 1. **Prerequisites**: Install Docker and Docker Compose. Create a `.env` file with vars like `POSTGRES_USER=postgres`, `KEYCLOAK_ADMIN_USERNAME=admin`, etc. (copy from sample if available). For backend builds, ensure Maven is available if building outside Docker. For frontend, install Yarn/NPM.
 2. **Build and Run**: In `./web-ui`, run `yarn install` then `yarn build` for frontend assets; overall: `docker compose up --build` (rebuilds images, including Vite build for frontend and Maven for backend). Use `-d` for detached mode.
 3. **Access Services**:
-   - Frontend: http://localhost:3000/coral (interact with maps, tables; auth redirects to Keycloak).
+   - Frontend: http://localhost:3000/appdemo (interact with maps, tables; auth redirects to Keycloak).
    - Backend API: http://localhost:8080 (e.g., `/actuator/health` for status; `/swagger-ui.html` for docs).
    - Keycloak Admin: http://localhost:8081/auth (login with admin creds).
    - pgAdmin: http://localhost:8083 (add servers for appdemo-db: host `appdemo-db`, port 5432).
