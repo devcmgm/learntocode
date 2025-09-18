@@ -1,12 +1,12 @@
 ### Overview of the Docker Compose File
 
-This is a Docker Compose configuration file (version 3.8) for orchestrating a multi-container application stack named "Whales". Docker Compose is a tool for defining and running multi-container Docker applications using a YAML file. This file defines services, networks, volumes, and their interdependencies to set up a full-stack web application with frontend, backend, databases, authentication, AWS service emulation, database management tools, a reverse proxy, and a custom emulator for security scanning.
+This is a Docker Compose configuration file (version 3.8) for orchestrating a multi-container application stack named "appdemo". Docker Compose is a tool for defining and running multi-container Docker applications using a YAML file. This file defines services, networks, volumes, and their interdependencies to set up a full-stack web application with frontend, backend, databases, authentication, AWS service emulation, database management tools, a reverse proxy, and a custom emulator for security scanning.
 
 The setup appears to be for a development or local environment of a web application that involves user authentication, data storage with geospatial capabilities (via PostGIS), file storage and security emulation (using LocalStack to mimic AWS S3 and GuardDuty), and a frontend served via Nginx. It uses environment variables from `.env` and override files for configuration, allowing flexibility for secrets and settings without hardcoding them.
 
 Key high-level behaviors:
 - **Containerization**: All components run in isolated Docker containers for portability and consistency across environments (e.g., handling Apple M1/M4 chip compatibility with `platform: linux/amd64`).
-- **Networking**: All services connect via a custom bridge network (`whales-network`) for internal communication.
+- **Networking**: All services connect via a custom bridge network (`appdemo-network`) for internal communication.
 - **Volumes**: Persistent data storage for databases and shared static files between frontend and backend.
 - **Dependencies**: Services start in a specific order (e.g., backend depends on database and Keycloak).
 - **Builds**: Custom Docker images are built for several services using Dockerfiles in subdirectories (e.g., `./web-ui` for frontend).
@@ -20,38 +20,38 @@ The application likely handles data-intensive tasks (e.g., geospatial data via P
 
 This configuration launches 9 services that form a cohesive application ecosystem. Here's a breakdown of each service and its role:
 
-1. **Frontend (whales-frontend)**:
+1. **Frontend (appdemo-frontend)**:
    - Builds a custom image from `./web-ui` using Node.js (builder base: `node:20-alpine`) for building the UI and Nginx (runner base: `nginx:1.27.3`) for serving it.
    - Serves a web UI on port 3000 (mapped to container's 80).
    - Shares static files via a volume (`static-files`) with the backend.
    - Loads env vars from `.env`.
    - Purpose: Handles user-facing interface, likely a single-page application (SPA) built with a framework like React/Vue (inferred from Node.js builder).
 
-2. **Backend (whales-backend)**:
+2. **Backend (appdemo-backend)**:
    - Builds a custom image from `./api-server` using Alpine Linux bases (both builder and runner: `alpine:3.21`).
    - Likely a Java-based API server (commented `JAVA_HOME` suggests OpenJDK; ports like 8080/8443/9090/9443 are common for Spring Boot/Tomcat with HTTP/HTTPS and debug ports).
    - Exposes APIs on multiple ports (e.g., 8080 for HTTP, 8443 for HTTPS, 9090 possibly for management/metrics).
-   - Depends on the database (`whales-db`) and Keycloak for startup.
+   - Depends on the database (`appdemo-db`) and Keycloak for startup.
    - Shares static files with frontend.
    - Loads env vars from `.env` and `.env-docker-compose-override` (for overrides like dev/prod settings).
 
-3. **Database (whales-db)**:
+3. **Database (appdemo-db)**:
    - Uses PostGIS image (PostgreSQL with geospatial extensions) for storing application data.
    - Configured with user/password/DB from env vars.
-   - Persistent data in volume `whales-pg-data`.
+   - Persistent data in volume `appdemo-pg-data`.
    - Exposes port 5432 for local connections.
    - Commented init scripts suggest SQL files for schema setup (e.g., metadata and audit tables), but they're disabled—likely run manually or via migrations.
 
-4. **Keycloak Database (whales-kc-db)**:
+4. **Keycloak Database (appdemo-kc-db)**:
    - A separate PostgreSQL instance for Keycloak's data.
-   - Configured similarly to `whales-db` but on port 5433 to avoid conflicts.
-   - Persistent data in `whales-kc-pg-data`.
+   - Configured similarly to `appdemo-db` but on port 5433 to avoid conflicts.
+   - Persistent data in `appdemo-kc-pg-data`.
    - Runs an init script (`init-db.sh`) on startup for database setup.
 
-5. **Keycloak (whales-keycloak)**:
+5. **Keycloak (appdemo-keycloak)**:
    - Builds a custom image from `./keycloak` based on Keycloak 25.0.4.
    - Handles identity and access management (IAM): authentication, authorization, SSO.
-   - Connects to its own DB (`whales-kc-db`).
+   - Connects to its own DB (`appdemo-kc-db`).
    - Imports realms/users from `./keycloak/import/` and exports to `./keycloak/export/`.
    - Health check pings port 8080 with retries.
    - Command starts in dev mode with realm import; commented options for export.
@@ -59,7 +59,7 @@ This configuration launches 9 services that form a cohesive application ecosyste
    - Exposes ports 8081 (HTTP) and 9000 (possibly metrics/debug).
    - Environment tweaks for dev (e.g., relaxed hostname checks).
 
-6. **LocalStack (whales-localstack)**:
+6. **LocalStack (appdemo-localstack)**:
    - Uses LocalStack image to emulate AWS services locally (here, only S3 enabled via `SERVICES=s3`).
    - For testing AWS integrations without real cloud costs (e.g., S3 bucket for file storage).
    - Mounts `/var/run/docker.sock` for Lambda support if needed.
@@ -67,13 +67,13 @@ This configuration launches 9 services that form a cohesive application ecosyste
    - Exposes port 4566 for AWS API endpoints (e.g., http://localhost:4566).
    - Init scripts from `./localstack/` for setup (e.g., creating buckets).
 
-7. **pgAdmin (whales-pgadmin)**:
+7. **pgAdmin (appdemo-pgadmin)**:
    - Web-based admin tool for PostgreSQL databases (dpage/pgadmin4 image).
    - Access via port 8083 with email/password from env vars.
    - Persistent config in `pgadmin-data` volume.
-   - Used for browsing/managing `whales-db` and `whales-kc-db`.
+   - Used for browsing/managing `appdemo-db` and `appdemo-kc-db`.
 
-8. **Nginx (whales-nginx)**:
+8. **Nginx (appdemo-nginx)**:
    - Builds custom image from `./nginx` (likely a reverse proxy config).
    - Exposes port 80, mapping to container's 8080—possibly proxies traffic to other services.
    - Depends on Keycloak (for auth integration?).
@@ -88,7 +88,7 @@ This configuration launches 9 services that form a cohesive application ecosyste
 
 Overall orchestration:
 - **Startup Sequence**: Databases first, then Keycloak (with health check), backend (depends on DB/Keycloak), others in parallel.
-- **Shared Resources**: Volumes for data persistence; network for service discovery (e.g., backend connects to `whales-db:5432`).
+- **Shared Resources**: Volumes for data persistence; network for service discovery (e.g., backend connects to `appdemo-db:5432`).
 - **Customization**: Build args allow overriding base images (e.g., for different Node/Java versions).
 - **Platform Fix**: `linux/amd64` ensures compatibility on ARM chips like Apple Silicon.
 
@@ -129,13 +129,13 @@ To set up and run:
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8080
    - Keycloak Admin: http://localhost:8081/auth (login with admin creds).
-   - pgAdmin: http://localhost:8083 (add servers for whales-db: host `whales-db`, port 5432).
+   - pgAdmin: http://localhost:8083 (add servers for appdemo-db: host `appdemo-db`, port 5432).
    - LocalStack S3: Use AWS CLI with `--endpoint-url http://localhost:4566`.
 4. **Debugging**: `docker compose logs <service>`; for Keycloak export, edit command and restart.
 5. **Customization**: Override images via env vars (e.g., `export FRONTEND_BUILDER_BASE_IMAGE=node:18-alpine; docker compose up`).
 6. **Teardown**: `docker compose down -v` (removes volumes).
 7. **Common Issues**: On M1/M4 Macs, ensure Rosetta for amd64 emulation. If builds fail, check Dockerfiles in contexts (e.g., `./web-ui/Dockerfile`).
-8. **Migrations**: Uncomment init SQL in whales-db for schema setup; use tools like Flyway/Liquibase in backend for prod.
+8. **Migrations**: Uncomment init SQL in appdemo-db for schema setup; use tools like Flyway/Liquibase in backend for prod.
 
 ### Design Architecture Document
 
@@ -143,16 +143,16 @@ To set up and run:
 The system follows a microservices-like architecture with separation of concerns:
 - **Presentation Layer**: Frontend (Node.js/Nginx) → Serves UI, communicates with backend via API.
 - **Application Layer**: Backend (Java/Alpine) → Handles business logic, APIs; depends on DB and auth.
-- **Data Layer**: whales-db (PostGIS) for app data; whales-kc-db (PostgreSQL) for auth data.
+- **Data Layer**: appdemo-db (PostGIS) for app data; appdemo-kc-db (PostgreSQL) for auth data.
 - **Security Layer**: Keycloak → Central auth server; GuardDuty emulator → Scans S3 uploads.
 - **Infrastructure Layer**: LocalStack → AWS mocks; Nginx → Proxy/gateway; pgAdmin → DB tooling.
 
 #### Component Diagram
 - **User → Nginx (Proxy) → Frontend/Backend**
 - **Frontend ↔ Backend** (via shared static volume and API calls)
-- **Backend → whales-db** (JDBC for data)
+- **Backend → appdemo-db** (JDBC for data)
 - **Backend → Keycloak** (OAuth for auth)
-- **Keycloak → whales-kc-db** (JDBC)
+- **Keycloak → appdemo-kc-db** (JDBC)
 - **Backend/GuardDuty → LocalStack** (AWS SDK for S3)
 - **Admin → pgAdmin** (for DB access)
 
@@ -171,13 +171,13 @@ The system follows a microservices-like architecture with separation of concerns
 
 ### Overview of the Docker Compose File
 
-This is a Docker Compose configuration file (version 3.8) for orchestrating a multi-container application stack named "Whales". Docker Compose is a tool for defining and running multi-container Docker applications using a YAML file. This file defines services, networks, volumes, and their interdependencies to set up a full-stack web application with frontend, backend, databases, authentication, AWS service emulation, database management tools, a reverse proxy, and a custom emulator for security scanning.
+This is a Docker Compose configuration file (version 3.8) for orchestrating a multi-container application stack named "appdemo". Docker Compose is a tool for defining and running multi-container Docker applications using a YAML file. This file defines services, networks, volumes, and their interdependencies to set up a full-stack web application with frontend, backend, databases, authentication, AWS service emulation, database management tools, a reverse proxy, and a custom emulator for security scanning.
 
 The setup appears to be for a development or local environment of a web application that involves user authentication, data storage with geospatial capabilities (via PostGIS), file storage and security emulation (using LocalStack to mimic AWS S3 and GuardDuty), and a frontend served via Nginx. It uses environment variables from `.env` and override files for configuration, allowing flexibility for secrets and settings without hardcoding them.
 
 Key high-level behaviors:
 - **Containerization**: All components run in isolated Docker containers for portability and consistency across environments (e.g., handling Apple M1/M4 chip compatibility with `platform: linux/amd64`).
-- **Networking**: All services connect via a custom bridge network (`whales-network`) for internal communication.
+- **Networking**: All services connect via a custom bridge network (`appdemo-network`) for internal communication.
 - **Volumes**: Persistent data storage for databases and shared static files between frontend and backend.
 - **Dependencies**: Services start in a specific order (e.g., backend depends on database and Keycloak).
 - **Builds**: Custom Docker images are built for several services using Dockerfiles in subdirectories (e.g., `./web-ui` for frontend).
@@ -191,18 +191,18 @@ The application likely handles data-intensive tasks (e.g., geospatial data via P
 
 This configuration launches 9 services that form a cohesive application ecosystem. Here's a breakdown of each service and its role:
 
-1. **Frontend (whales-frontend)**:
+1. **Frontend (appdemo-frontend)**:
    - Builds a custom image from `./web-ui` using Node.js (builder base: `node:20-alpine`) for building the UI and Nginx (runner base: `nginx:1.27.3`) for serving it.
    - Serves a web UI on port 3000 (mapped to container's 80).
    - Shares static files via a volume (`static-files`) with the backend.
    - Loads env vars from `.env`.
    - Purpose: Handles user-facing interface, likely a single-page application (SPA) built with a framework like React/Vue (inferred from Node.js builder).
 
-2. **Backend (whales-backend)**:
+2. **Backend (appdemo-backend)**:
    - Builds a custom image from `./api-server` using Alpine Linux bases (both builder and runner: `alpine:3.21`).
    - A Java-based API server using Spring Boot 3.5.4 (with OpenJDK 17 or 21 via profile), configured for REST APIs, database access, security, and integrations.
    - Exposes APIs on multiple ports (e.g., 8080 for HTTP, 8443 for HTTPS, 9090 possibly for management/metrics like Actuator endpoints).
-   - Depends on the database (`whales-db`) and Keycloak for startup.
+   - Depends on the database (`appdemo-db`) and Keycloak for startup.
    - Shares static files with frontend.
    - Loads env vars from `.env` and `.env-docker-compose-override` (for overrides like dev/prod settings).
    - **Java Technologies Used** (derived from POM.xml analysis): The backend is built as a Maven project with a focus on secure, scalable API development, vulnerability mitigation (e.g., updated versions for CVEs), and specialized processing for documents/PDFs. Key technologies include:
@@ -265,23 +265,23 @@ This configuration launches 9 services that form a cohesive application ecosyste
        - Lombok for annotations like `@Data`; Jackson for JSON serialization; Netty for networking (overridden for vulns).
        - **Why Needed**: Reduces code verbosity, handles JSON, improves performance/security.
 
-3. **Database (whales-db)**:
+3. **Database (appdemo-db)**:
    - Uses PostGIS image (PostgreSQL with geospatial extensions) for storing application data.
    - Configured with user/password/DB from env vars.
-   - Persistent data in volume `whales-pg-data`.
+   - Persistent data in volume `appdemo-pg-data`.
    - Exposes port 5432 for local connections.
    - Commented init scripts suggest SQL files for schema setup (e.g., metadata and audit tables), but they're disabled—likely run manually or via migrations (e.g., Liquibase in backend).
 
-4. **Keycloak Database (whales-kc-db)**:
+4. **Keycloak Database (appdemo-kc-db)**:
    - A separate PostgreSQL instance for Keycloak's data.
-   - Configured similarly to `whales-db` but on port 5433 to avoid conflicts.
-   - Persistent data in `whales-kc-pg-data`.
+   - Configured similarly to `appdemo-db` but on port 5433 to avoid conflicts.
+   - Persistent data in `appdemo-kc-pg-data`.
    - Runs an init script (`init-db.sh`) on startup for database setup.
 
-5. **Keycloak (whales-keycloak)**:
+5. **Keycloak (appdemo-keycloak)**:
    - Builds a custom image from `./keycloak` based on Keycloak 25.0.4.
    - Handles identity and access management (IAM): authentication, authorization, SSO.
-   - Connects to its own DB (`whales-kc-db`).
+   - Connects to its own DB (`appdemo-kc-db`).
    - Imports realms/users from `./keycloak/import/` and exports to `./keycloak/export/`.
    - Health check pings port 8080 with retries.
    - Command starts in dev mode with realm import; commented options for export.
@@ -289,7 +289,7 @@ This configuration launches 9 services that form a cohesive application ecosyste
    - Exposes ports 8081 (HTTP) and 9000 (possibly metrics/debug).
    - Environment tweaks for dev (e.g., relaxed hostname checks).
 
-6. **LocalStack (whales-localstack)**:
+6. **LocalStack (appdemo-localstack)**:
    - Uses LocalStack image to emulate AWS services locally (here, only S3 enabled via `SERVICES=s3`).
    - For testing AWS integrations without real cloud costs (e.g., S3 bucket for file storage).
    - Mounts `/var/run/docker.sock` for Lambda support if needed.
@@ -297,13 +297,13 @@ This configuration launches 9 services that form a cohesive application ecosyste
    - Exposes port 4566 for AWS API endpoints (e.g., http://localhost:4566).
    - Init scripts from `./localstack/` for setup (e.g., creating buckets).
 
-7. **pgAdmin (whales-pgadmin)**:
+7. **pgAdmin (appdemo-pgadmin)**:
    - Web-based admin tool for PostgreSQL databases (dpage/pgadmin4 image).
    - Access via port 8083 with email/password from env vars.
    - Persistent config in `pgadmin-data` volume.
-   - Used for browsing/managing `whales-db` and `whales-kc-db`.
+   - Used for browsing/managing `appdemo-db` and `appdemo-kc-db`.
 
-8. **Nginx (whales-nginx)**:
+8. **Nginx (appdemo-nginx)**:
    - Builds custom image from `./nginx` (likely a reverse proxy config).
    - Exposes port 80, mapping to container's 8080—possibly proxies traffic to other services.
    - Depends on Keycloak (for auth integration?).
@@ -318,7 +318,7 @@ This configuration launches 9 services that form a cohesive application ecosyste
 
 Overall orchestration:
 - **Startup Sequence**: Databases first, then Keycloak (with health check), backend (depends on DB/Keycloak), others in parallel.
-- **Shared Resources**: Volumes for data persistence; network for service discovery (e.g., backend connects to `whales-db:5432`).
+- **Shared Resources**: Volumes for data persistence; network for service discovery (e.g., backend connects to `appdemo-db:5432`).
 - **Customization**: Build args allow overriding base images (e.g., for different Node/Java versions).
 - **Platform Fix**: `linux/amd64` ensures compatibility on ARM chips like Apple Silicon.
 
@@ -359,13 +359,13 @@ To set up and run:
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8080 (e.g., `/actuator/health` for status; `/swagger-ui.html` for docs).
    - Keycloak Admin: http://localhost:8081/auth (login with admin creds).
-   - pgAdmin: http://localhost:8083 (add servers for whales-db: host `whales-db`, port 5432).
+   - pgAdmin: http://localhost:8083 (add servers for appdemo-db: host `appdemo-db`, port 5432).
    - LocalStack S3: Use AWS CLI with `--endpoint-url http://localhost:4566`.
 4. **Debugging**: `docker compose logs <service>`; for Keycloak export, edit command and restart. For backend, attach debugger on port 9090/9443.
 5. **Customization**: Override images via env vars (e.g., `export FRONTEND_BUILDER_BASE_IMAGE=node:18-alpine; docker compose up`). For Java 21: Activate profile in POM and rebuild.
 6. **Teardown**: `docker compose down -v` (removes volumes).
 7. **Common Issues**: On M1/M4 Macs, ensure Rosetta for amd64 emulation. If builds fail, check Dockerfiles in contexts (e.g., `./web-ui/Dockerfile`) or Maven dependencies (run `mvn dependency:tree` locally). Vulnerability scans via `mvn dependency-check:check`.
-8. **Migrations**: Uncomment init SQL in whales-db for schema setup; use Liquibase in backend for automated changes (e.g., `mvn liquibase:update`).
+8. **Migrations**: Uncomment init SQL in appdemo-db for schema setup; use Liquibase in backend for automated changes (e.g., `mvn liquibase:update`).
 
 ### Design Architecture Document
 
@@ -373,16 +373,16 @@ To set up and run:
 The system follows a microservices-like architecture with separation of concerns:
 - **Presentation Layer**: Frontend (Node.js/Nginx) → Serves UI, communicates with backend via API.
 - **Application Layer**: Backend (Spring Boot/Java) → Handles business logic, APIs, document processing; depends on DB and auth.
-- **Data Layer**: whales-db (PostGIS) for app data; whales-kc-db (PostgreSQL) for auth data.
+- **Data Layer**: appdemo-db (PostGIS) for app data; appdemo-kc-db (PostgreSQL) for auth data.
 - **Security Layer**: Keycloak → Central auth server; GuardDuty emulator → Scans S3 uploads.
 - **Infrastructure Layer**: LocalStack → AWS mocks; Nginx → Proxy/gateway; pgAdmin → DB tooling.
 
 #### Component Diagram
 - **User → Nginx (Proxy) → Frontend/Backend**
 - **Frontend ↔ Backend** (via shared static volume and API calls)
-- **Backend → whales-db** (JDBC/JPA for data)
+- **Backend → appdemo-db** (JDBC/JPA for data)
 - **Backend → Keycloak** (OAuth for auth)
-- **Keycloak → whales-kc-db** (JDBC)
+- **Keycloak → appdemo-kc-db** (JDBC)
 - **Backend/GuardDuty → LocalStack** (AWS SDK for S3)
 - **Admin → pgAdmin** (for DB access)
 
