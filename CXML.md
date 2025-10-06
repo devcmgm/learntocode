@@ -116,4 +116,85 @@ int main(int argc, char **argv) {
        Content: London
    ```
 
+### Docker Example: Containerizing a C XML Parser
+
+This example builds on the previous C XML parser code (using libxml2). We'll create a Docker container that compiles and runs the parser on a sample XML file. The container uses Ubuntu as the base image for easy package management.
+
+#### Prerequisites
+- Docker installed (as in the previous Docker example).
+- Create a project directory with:
+  - `xml_parser.c` (the C code from before).
+  - `sample.xml` (the sample XML file).
+  - `Dockerfile` (defined below).
+
+#### Step 1: Create the Dockerfile
+In your project directory, create `Dockerfile`:
+
+```dockerfile
+# Use Ubuntu as base for easy apt package management
+FROM ubuntu:22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build tools and libxml2
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy source files
+COPY xml_parser.c .
+COPY sample.xml .
+
+# Compile the C code
+RUN gcc xml_parser.c -o xml_parser -lxml2
+
+# Run the executable when the container starts
+CMD ["./xml_parser", "sample.xml"]
+```
+
+#### Step 2: Build the Image
+In the terminal (project directory):
+```bash
+docker build -t c-xml-parser .
+```
+- `-t c-xml-parser`: Tags the image.
+- This installs dependencies, copies files, compiles `xml_parser.c` into `xml_parser`, and sets it as the entrypoint.
+
+#### Step 3: Run the Container
+```bash
+docker run c-xml-parser
+```
+Output (same as the non-containerized version):
+```
+Root node: root
+Node name: person
+  Node name: name
+    Content: Alice
+  Node name: age
+    Content: 30
+  Node name: city
+    Content: New York
+Node name: person
+
+  Node name: name
+    Content: Bob
+  Node name: age
+    Content: 25
+  Node name: city
+    Content: London
+```
+
+#### Step 4: Explore Further
+- **Mount volumes for external XML**: `docker run -v $(pwd)/myfile.xml:/app/myfile.xml c-xml-parser myfile.xml` to parse a host file.
+- **Interactive debugging**: `docker run -it c-xml-parser /bin/bash` to enter the container shell and inspect.
+- **Multi-stage build** (for smaller image): Use a builder stage to compile, then copy the binary to a runtime image like `ubuntu:22.04` without dev tools.
+- **Push to registry**: Tag and push to Docker Hub for sharing.
+
+This setup ensures reproducible builds. For production, add error handling or use a slimmer base like Alpine (adjust packages to `apk add gcc libxml2-dev`). See Docker docs for optimizations!
+
 This is a basic starting point. For more advanced features (e.g., XPath), extend with `<libxml/xpath.h>`. Refer to the libxml2 documentation for details.
